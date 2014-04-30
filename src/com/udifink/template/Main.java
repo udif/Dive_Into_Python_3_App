@@ -1,4 +1,4 @@
-package com.jakewp11.template;
+package com.udifink.template;
 
 /*The MIT License (MIT)
 
@@ -23,7 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.*/
 
 
-import com.jakewp11.template.R;
+import com.udifink.template.R;
 
 import android.app.Activity;
 import android.os.Bundle;

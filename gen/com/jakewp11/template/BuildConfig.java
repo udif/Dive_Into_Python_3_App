@@ -1,5 +1,5 @@
 /** Automatically generated file. DO NOT MODIFY */
-package com.jakewp11.template;
+package com.udifink.template;
 
 public final class BuildConfig {
     public final static boolean DEBUG = true;

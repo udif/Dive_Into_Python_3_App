@@ -1,4 +1,4 @@
-package com.jakewp11.template;
+package com.udifink.template;
 
 /*The MIT License (MIT)
 
