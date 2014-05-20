@@ -48,7 +48,10 @@ public class Main extends Activity {
         setContentView(R.layout.main);
         webView = (WebView)findViewById(R.id.fullscreen_content);
         webView.setWebViewClient(new MyWebViewClient());
-        webView.loadUrl("file:///android_asset/www/index.html");
+        if (savedInstanceState != null)
+            webview.restoreState(savedInstanceState);
+        else
+            webView.loadUrl("file:///android_asset/www/index.html");
         //you can also link to a website. Example:
         //webView.loadUrl("www.google.com");
         //I have included web permissions in the AndroidManifest.xml
@@ -75,5 +78,8 @@ public class Main extends Activity {
         super.onPostCreate(savedInstanceState);
     }
 
-    
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        webView.saveState(outState);
+    }
 }
