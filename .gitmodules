@@ -1,0 +1,3 @@
+[submodule "diveintopython3"]
+	path = diveintopython3
+	url = https://github.com/udif/diveintopython3.git
