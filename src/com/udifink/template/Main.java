@@ -28,9 +28,18 @@ import com.udifink.template.R;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
+import android.webkit.WebSettings.LayoutAlgorithm;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.media.ToneGenerator;
+import android.media.AudioManager;
+import android.widget.FrameLayout;
+import android.content.res.Configuration;
+
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -39,30 +48,95 @@ import android.webkit.WebView;
  * @see SystemUiHider
  */
 public class Main extends Activity {
-    WebView webView;
+	protected FrameLayout webViewPlaceholder;
+	protected WebView webView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.main);
-        webView = (WebView)findViewById(R.id.fullscreen_content);
-        webView.setWebViewClient(new MyWebViewClient());
-        if (savedInstanceState != null)
-            webview.restoreState(savedInstanceState);
-        else
-            webView.loadUrl("file:///android_asset/www/index.html");
-        //you can also link to a website. Example:
-        //webView.loadUrl("www.google.com");
-        //I have included web permissions in the AndroidManifest.xml
-        webView.setWebChromeClient(new WebChromeClient());
-        WebSettings webSettings = webView.getSettings();
-        webSettings.setJavaScriptEnabled(true);
-        webSettings.setDomStorageEnabled(true);
-        webSettings.setDatabasePath("/data/data/"+this.getPackageName()+"/databases/");
-        
+		initUI();
+//		webView = (WebView)findViewById(R.id.fullscreen_content);
+//		webView.setWebViewClient(new MyWebViewClient());
+//		
+//		webView.setWebChromeClient(new WebChromeClient());
+//		WebSettings webSettings = webView.getSettings();
+//		webSettings.setJavaScriptEnabled(true);
+//		webSettings.setDomStorageEnabled(true);
+//		webSettings.setDatabasePath("/data/data/"+this.getPackageName()+"/databases/");  
     }
-    
+
+	protected void initUI()
+	{
+		// Retrieve UI elements
+		webViewPlaceholder = ((FrameLayout)findViewById(R.id.webViewPlaceholder));
+
+		// Initialize the WebView if necessary
+		if (webView == null)
+		{
+			// Create the webview
+			webView = new WebView(this);
+			webView.setLayoutParams(new ViewGroup.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
+			WebSettings webSettings = webView.getSettings();
+			webSettings.setJavaScriptEnabled(true);
+			webSettings.setDomStorageEnabled(true);
+			webSettings.setSupportZoom(true);
+			webSettings.setBuiltInZoomControls(true);
+			//webSettings().setLayoutAlgorithm(LayoutAlgorithm.TEXT_AUTOSIZING);
+			//webSettings().setLayoutAlgorithm(LayoutAlgorithm.SINGLE_COLUMN);
+			webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
+			webView.setScrollbarFadingEnabled(true);
+			webView.getSettings().setLoadsImagesAutomatically(true);
+
+			// Load the URLs inside the WebView, not in the external web browser
+			webView.setWebViewClient(new WebViewClient());
+
+			// Load a page
+			webView.loadUrl("file:///android_asset/www/index.html");
+		}
+
+		// Attach the WebView to its placeholder
+		webViewPlaceholder.addView(webView);
+	}
+	
+	@Override
+	public void onConfigurationChanged(Configuration newConfig)
+	{
+		if (webView != null)
+		{
+			// Remove the WebView from the old placeholder
+			webViewPlaceholder.removeView(webView);
+		}
+
+		super.onConfigurationChanged(newConfig);
+
+		// Load the layout resource for the new configuration
+		setContentView(R.layout.main);
+
+		// Reinitialize the UI
+		initUI();
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState)
+	{
+		super.onSaveInstanceState(outState);
+
+		// Save the state of the WebView
+		//ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 50);
+        //toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 200); // 200 is duration in ms
+		webView.saveState(outState);
+	}
+
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState)
+	{
+		super.onRestoreInstanceState(savedInstanceState);
+		// Restore the state of the WebView
+		webView.restoreState(savedInstanceState);
+	}
+	
     @Override
     public void onBackPressed()
     {
@@ -76,10 +150,5 @@ public class Main extends Activity {
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        webView.saveState(outState);
     }
 }
